@@ -349,6 +349,21 @@ describe('getReviewThumbnailURL', () => {
     ).toBe('/api/frigate/clientid/thumb.jpg');
   });
 
+  it.each([
+    ['docker', '/media/frigate/clips/review/thumb.webp'],
+    ['nixos', '/var/lib/frigate/clips/review/thumb.webp'],
+    ['root', '/clips/review/thumb.webp'],
+  ])('should get thumbnail URL for %s media root', (_name, thumbPath) => {
+    expect(
+      getReviewThumbnailURL(
+        'clientid',
+        createFrigateReview({
+          thumb_path: thumbPath,
+        }),
+      ),
+    ).toBe('/api/frigate/clientid/clips/review/thumb.webp');
+  });
+
   it('should return null when no thumb path', () => {
     expect(
       getReviewThumbnailURL(

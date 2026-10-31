@@ -196,7 +196,14 @@ export const getReviewThumbnailURL = (
   if (!review.thumb_path) {
     return null;
   }
-  const path = review.thumb_path.replace('/media/frigate/', '');
+  // Frigate's media root varies by install (/media/frigate in Docker,
+  // /var/lib/frigate on NixOS, ...), but review thumbnails always live under
+  // <root>/clips/, so anchor on that rather than a fixed prefix.
+  const clipsIndex = review.thumb_path.lastIndexOf('/clips/');
+  const path =
+    clipsIndex >= 0
+      ? review.thumb_path.slice(clipsIndex + 1)
+      : review.thumb_path.replace('/media/frigate/', '');
   return `/api/frigate/${clientId}/${path}`;
 };
 
